@@ -20,13 +20,17 @@ def index_view():
             return render_template("index.html", form=form)
         if not urlparse(form.original_link.data).scheme:
             form.original_link.data = "http://" + form.original_link.data
-        short_link = URLMap(
-            short=custom_id,
-            original=form.original_link.data,
-        )
-        db.session.add(short_link)
+        link = URLMap.query.filter_by(original=form.original_link.data).first()
+        if link:
+            link.short = custom_id
+        else:
+            link = URLMap(
+                short=custom_id,
+                original=form.original_link.data,
+            )
+            db.session.add(link)
         db.session.commit()
-        return render_template("index.html", form=form, short_link=short_link)
+        return render_template("index.html", form=form, short_link=link)
     return render_template("index.html", form=form)
 
 

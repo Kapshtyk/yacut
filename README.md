@@ -2,6 +2,11 @@
 
 YaCut is a simple URL shortening service and API written in Python using the Flask framework. It allows users to shorten long URLs and access the original URLs by providing a unique short identifier.
 
+## Main technlologies:
+- Flask
+- SQL Alchemy
+- Alembic
+
 ## Key Features
 
 - Generate short links associated with long URLs.
