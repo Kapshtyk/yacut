@@ -52,11 +52,12 @@ source venv/scripts/activate
 ```
 pip install -r requirements.txt
 ```
-3. Initialize the database (SQLite) for development.
+3. Create `.env` file in the root of the project (you can use .env.example as a reference)
+4. Initialize the database (SQLite) for development.
 ```
 flask db upgrade
 ```
-4. Start the Flask application and visit the URL to access the YaCut service.
+5. Start the Flask application and visit the URL to access the YaCut service.
 ```
 flask run
 ```
