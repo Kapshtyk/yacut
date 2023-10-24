@@ -1,10 +1,10 @@
-import re
+from http import HTTPStatus
 
 from flask import jsonify, request, url_for
 
 from . import app, db
 from .error_handlers import InvalidAPIUsage
-from .helpers import get_unique_short_id
+from .helpers import get_unique_short_id, validate_short_link
 from .models import URLMap
 
 
@@ -17,9 +17,7 @@ def cut_link():
         raise InvalidAPIUsage('"url" является обязательным полем!')
     url = data["url"]
     if "custom_id" in data and data["custom_id"]:
-        if len(data["custom_id"]) > 16 or not re.match(
-            r"^[a-zA-Z0-9]+$", data["custom_id"]
-        ):
+        if not validate_short_link(data["custom_id"]):
             raise InvalidAPIUsage("Указано недопустимое имя для короткой ссылки")
         short_id = data["custom_id"]
         if URLMap.query.filter_by(short=short_id).first():
@@ -44,7 +42,7 @@ def cut_link():
                 ),
             }
         ),
-        201,
+        HTTPStatus.CREATED,
     )
 
 
@@ -52,5 +50,7 @@ def cut_link():
 def get_link(short_id):
     link = URLMap.query.filter_by(short=short_id).first()
     if not link:
-        raise InvalidAPIUsage("Указанный id не найден", status_code=404)
-    return jsonify({"url": link.original}), 200
+        raise InvalidAPIUsage(
+            "Указанный id не найден", status_code=HTTPStatus.NOT_FOUND
+        )
+    return jsonify({"url": link.original}), HTTPStatus.OK
